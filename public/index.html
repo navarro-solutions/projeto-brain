@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Brain</title>
+  <meta name="theme-color" content="#111318" />
+  <link rel="stylesheet" href="/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked@14/marked.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <!-- Login -->
+  <div id="login" class="login hidden">
+    <form id="login-form" class="login-card">
+      <h1>🧠 Brain</h1>
+      <p>Seu segundo cérebro. Digite sua senha de acesso.</p>
+      <input id="token-input" type="password" placeholder="APP_TOKEN" autocomplete="current-password" required />
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-head">
+        <button id="new-chat" class="btn-primary">+ Nova conversa</button>
+      </div>
+      <nav id="conversation-list" class="conversation-list"></nav>
+      <div class="sidebar-foot">
+        <button id="open-memory" class="btn-ghost">🧩 Memória e perfil</button>
+        <button id="open-files" class="btn-ghost">📁 Arquivos</button>
+        <button id="logout" class="btn-ghost">Sair</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button id="toggle-sidebar" class="icon-btn" aria-label="Menu">☰</button>
+        <h2 id="conversation-title">Nova conversa</h2>
+      </header>
+
+      <section id="messages" class="messages">
+        <div class="empty">
+          <h3>O que está na sua cabeça?</h3>
+          <p>Escreva, grave um áudio ou envie qualquer arquivo. Tudo fica guardado e eu vou aprendendo como você pensa.</p>
+        </div>
+      </section>
+
+      <form id="composer" class="composer">
+        <div id="attachments" class="attachments"></div>
+        <div class="composer-row">
+          <label class="icon-btn" title="Anexar arquivos">
+            📎<input id="file-input" type="file" multiple hidden />
+          </label>
+          <button id="mic" type="button" class="icon-btn" title="Gravar áudio">🎙️</button>
+          <textarea id="input" rows="1" placeholder="Escreva algo…"></textarea>
+          <button id="send" type="submit" class="btn-primary">Enviar</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <!-- Painel lateral: memória / arquivos -->
+  <div id="panel" class="panel hidden">
+    <div class="panel-card">
+      <header>
+        <h3 id="panel-title"></h3>
+        <button id="panel-close" class="icon-btn" aria-label="Fechar">✕</button>
+      </header>
+      <div id="panel-body" class="panel-body"></div>
+    </div>
+  </div>
+</body>
+</html>

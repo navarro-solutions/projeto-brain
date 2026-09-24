@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "projeto-brain",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // Frontend estático (public/) servido pelo próprio Worker
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  // Workers AI: transcrição de áudio (Whisper), embeddings (bge-m3) e conversão de documentos
+  "ai": { "binding": "AI" },
+  "observability": { "enabled": true },
+  "vars": {
+    "CLAUDE_MODEL": "claude-opus-5",
+    "SUPABASE_BUCKET": "brain-files"
+  }
+  // Segredos (configure com `wrangler secret put <NOME>`):
+  //   ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, APP_TOKEN
+}
