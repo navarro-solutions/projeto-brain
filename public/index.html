@@ -18,6 +18,8 @@
       <p>Seu segundo cérebro. Digite sua senha de acesso.</p>
       <input id="token-input" type="password" placeholder="APP_TOKEN" autocomplete="current-password" required />
       <button type="submit" class="btn-primary">Entrar</button>
+      <p id="login-error" class="error" role="alert"></p>
+      <p class="hint">A senha é o valor do secret <code>APP_TOKEN</code> configurado no Worker. Diagnóstico: <a href="/api/health" target="_blank">/api/health</a></p>
     </form>
   </div>
 

@@ -15,14 +15,45 @@ const app = new Hono<AppContext>();
 // ---------------------------------------------------------------------------
 // Autenticação simples por token (uso pessoal)
 // ---------------------------------------------------------------------------
+/**
+ * Diagnóstico público: mostra apenas QUAIS configurações existem (nunca os valores).
+ * Abra /api/health no navegador para conferir o deploy.
+ */
+app.get("/api/health", async (c) => {
+  const env = c.env;
+  const secrets = {
+    APP_TOKEN: Boolean(env.APP_TOKEN?.trim()),
+    ANTHROPIC_API_KEY: Boolean(env.ANTHROPIC_API_KEY?.trim()),
+    SUPABASE_URL: Boolean(env.SUPABASE_URL?.trim()),
+    SUPABASE_SERVICE_ROLE_KEY: Boolean(env.SUPABASE_SERVICE_ROLE_KEY?.trim()),
+  };
+  let database = "não testado (faltam SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY)";
+  if (secrets.SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const { error } = await getSupabase(env).from("profile").select("id").limit(1);
+      database = error ? `erro: ${error.message}` : "ok";
+    } catch (err) {
+      database = `erro: ${err instanceof Error ? err.message : String(err)}`;
+    }
+  }
+  return c.json({ secrets, database, ai_binding: Boolean(env.AI), model: env.CLAUDE_MODEL });
+});
+
 app.use("/api/*", async (c, next) => {
+  const expected = c.env.APP_TOKEN?.trim();
+  if (!expected) {
+    return c.json({ error: "APP_TOKEN não configurado no Worker (Settings → Variables and Secrets)" }, 503);
+  }
   const header = c.req.header("Authorization") ?? "";
-  const token = header.startsWith("Bearer ") ? header.slice(7) : "";
-  if (!c.env.APP_TOKEN || !(await safeEqual(token, c.env.APP_TOKEN))) {
-    return c.json({ error: "Não autorizado" }, 401);
+  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  if (!(await safeEqual(token, expected))) {
+    return c.json({ error: "Senha incorreta" }, 401);
   }
   await next();
 });
+
+/** Só confere a senha (não depende do banco). */
+app.get("/api/auth", (c) => c.json({ ok: true }));
 
 app.onError((err, c) => {
   console.error(err);

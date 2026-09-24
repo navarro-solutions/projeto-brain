@@ -53,6 +53,10 @@ button:disabled { opacity: 0.5; cursor: default; }
 }
 .login-card h1 { margin: 0; }
 .login-card p { margin: 0; color: var(--muted); }
+.login-card .error { color: var(--danger); }
+.login-card .error:empty { display: none; }
+.login-card .hint { font-size: 12px; }
+.login-card a { color: var(--accent); }
 input, textarea {
   font: inherit; color: var(--text); background: var(--surface-2);
   border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;

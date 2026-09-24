@@ -21,10 +21,11 @@ async function api(path, options = {}) {
     ...options,
     headers: { ...(options.headers || {}), Authorization: `Bearer ${state.token}` },
   });
-  if (res.status === 401) { logout(); throw new Error("Não autorizado"); }
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Erro ${res.status}`);
+    const message = body.error || `Erro ${res.status} em ${path} (a API não respondeu como esperado)`;
+    if (res.status === 401 && path !== "/api/auth") logout();
+    throw new Error(message);
   }
   return res;
 }
@@ -42,7 +43,9 @@ function renderMarkdown(text) {
 function showApp() {
   $("#login").classList.add("hidden");
   $("#app").classList.remove("hidden");
-  loadConversations();
+  loadConversations().catch((err) => {
+    alert(`Entrou, mas não foi possível carregar as conversas: ${err.message}\n\nAbra /api/health para ver o que falta configurar.`);
+  });
 }
 function logout() {
   state.token = null;
@@ -53,12 +56,14 @@ function logout() {
 $("#login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
   state.token = $("#token-input").value.trim();
+  const errorBox = $("#login-error");
+  errorBox.textContent = "";
   try {
-    await api("/api/profile");
+    await api("/api/auth");
     safeSet("brain-token", state.token);
     showApp();
-  } catch {
-    alert("Senha inválida.");
+  } catch (err) {
+    errorBox.textContent = err.message;
   }
 });
 $("#logout").addEventListener("click", logout);
