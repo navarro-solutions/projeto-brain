@@ -36,7 +36,9 @@ app.get("/api/health", async (c) => {
       database = `erro: ${err instanceof Error ? err.message : String(err)}`;
     }
   }
-  return c.json({ secrets, database, ai_binding: Boolean(env.AI), model: env.CLAUDE_MODEL });
+  // Nomes (nunca valores) de tudo que o Worker recebeu — ajuda a achar nomes digitados errado
+  const received = Object.keys(env).sort();
+  return c.json({ secrets, database, ai_binding: Boolean(env.AI), model: env.CLAUDE_MODEL, received });
 });
 
 app.use("/api/*", async (c, next) => {
